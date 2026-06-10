@@ -26,7 +26,6 @@
       gap: 12px;
     }
 
-    /* Header */
     .header {
       display: flex;
       align-items: center;
@@ -61,7 +60,6 @@
       margin-top: 4px;
     }
 
-    /* Input row */
     .input-row {
       display: flex;
       gap: 8px;
@@ -79,15 +77,9 @@
       min-width: 0;
     }
 
-    .input-wrap:focus-within {
-      border-color: #1D9BF0;
-    }
+    .input-wrap:focus-within { border-color: #1D9BF0; }
 
-    .input-icon {
-      font-size: 14px;
-      margin-right: 8px;
-      flex-shrink: 0;
-    }
+    .input-icon { font-size: 14px; margin-right: 8px; flex-shrink: 0; }
 
     #url-input {
       flex: 1;
@@ -114,8 +106,6 @@
       display: none;
     }
 
-    #clear-btn:hover { color: #94A3B8; }
-
     #paste-btn {
       background: #161B22;
       border: 1px solid #21262D;
@@ -125,10 +115,7 @@
       font-size: 16px;
       color: #94A3B8;
       flex-shrink: 0;
-      transition: background 0.15s;
     }
-
-    #paste-btn:hover { background: #1C2330; }
 
     #fetch-btn {
       background: #1D9BF0;
@@ -143,14 +130,12 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      transition: opacity 0.2s, background 0.15s;
       white-space: nowrap;
+      min-height: 46px;
     }
 
-    #fetch-btn:hover { background: #1a8fd8; }
     #fetch-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-    /* Progress bar */
     .progress-bar {
       height: 3px;
       background: #1E2A38;
@@ -168,7 +153,14 @@
       animation: shimmer 1.2s linear infinite;
     }
 
-    /* Error box */
+    .status-label {
+      font-size: 12px;
+      color: #475569;
+      text-align: center;
+      display: none;
+      padding: 4px 0;
+    }
+
     .error-box {
       background: rgba(239,68,68,0.1);
       border: 1px solid rgba(239,68,68,0.3);
@@ -177,11 +169,47 @@
       font-size: 13px;
       color: #FCA5A5;
       display: none;
-      align-items: flex-start;
-      gap: 8px;
+      flex-direction: column;
+      gap: 10px;
     }
 
-    /* Result card */
+    .error-top { display: flex; align-items: flex-start; gap: 8px; }
+
+    .fallback-links {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-top: 4px;
+      border-top: 1px solid rgba(239,68,68,0.2);
+    }
+
+    .fallback-label {
+      font-size: 11px;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 2px;
+    }
+
+    .fallback-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 7px;
+      padding: 9px 12px;
+      color: #E2E8F0;
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .fallback-btn:hover { background: rgba(255,255,255,0.09); }
+    .fallback-btn span { color: #64748B; font-size: 12px; }
+
     .result-card {
       background: #161B22;
       border: 1px solid #21262D;
@@ -292,11 +320,9 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      transition: opacity 0.2s, background 0.15s;
       white-space: nowrap;
     }
 
-    .dl-btn:hover { background: #1a8fd8; }
     .dl-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .disclaimer {
@@ -306,7 +332,6 @@
       border-top: 1px solid #1A222E;
     }
 
-    /* Hint grid */
     .hint-box { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
     .hint-item {
@@ -323,7 +348,6 @@
 
     .hint-icon { font-size: 18px; flex-shrink: 0; }
 
-    /* Spinner */
     .spinner {
       display: inline-block;
       width: 14px;
@@ -335,10 +359,7 @@
       flex-shrink: 0;
     }
 
-    .spinner-sm { width: 12px; height: 12px; }
-
     @keyframes spin { to { transform: rotate(360deg); } }
-
     @keyframes shimmer {
       0%   { background-position: 200% 0; }
       100% { background-position: -200% 0; }
@@ -353,7 +374,6 @@
 <body>
 <div class="container">
 
-  <!-- Header -->
   <div class="header">
     <div class="logo">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
@@ -366,29 +386,41 @@
     </div>
   </div>
 
-  <!-- Input row -->
   <div class="input-row">
     <div class="input-wrap">
       <span class="input-icon">🔗</span>
       <input id="url-input" type="text" placeholder="https://x.com/user/status/…" spellcheck="false" autocomplete="off" />
-      <button id="clear-btn" title="Clear">✕</button>
+      <button id="clear-btn">✕</button>
     </div>
     <button id="paste-btn" title="Paste from clipboard">📋</button>
     <button id="fetch-btn">Fetch</button>
   </div>
 
-  <!-- Progress bar -->
   <div class="progress-bar" id="progress-bar">
     <div class="progress-fill"></div>
   </div>
 
-  <!-- Error -->
+  <div class="status-label" id="status-label"></div>
+
   <div class="error-box" id="error-box">
-    <span>⚠️</span>
-    <span id="error-msg"></span>
+    <div class="error-top">
+      <span>⚠️</span>
+      <span id="error-msg"></span>
+    </div>
+    <div class="fallback-links" id="fallback-links" style="display:none">
+      <div class="fallback-label">Open in a working downloader instead →</div>
+      <a class="fallback-btn" id="link-saver" href="#" target="_blank" rel="noopener">
+        savetweetvid.com <span>↗</span>
+      </a>
+      <a class="fallback-btn" id="link-twdown" href="#" target="_blank" rel="noopener">
+        twdown.net <span>↗</span>
+      </a>
+      <a class="fallback-btn" id="link-twittervideodownloader" href="#" target="_blank" rel="noopener">
+        twittervideodownloader.com <span>↗</span>
+      </a>
+    </div>
   </div>
 
-  <!-- Result card -->
   <div class="result-card" id="result-card">
     <div class="tweet-preview">
       <img id="tweet-thumb" alt="thumbnail" />
@@ -408,7 +440,6 @@
     <p class="disclaimer">Downloads are for personal use only. Respect content creators and platform ToS.</p>
   </div>
 
-  <!-- Idle hints -->
   <div class="hint-box" id="hint-box">
     <div class="hint-item"><span class="hint-icon">📎</span><span>Works with twitter.com and x.com links</span></div>
     <div class="hint-item"><span class="hint-icon">🎬</span><span>Downloads MP4 in original quality</span></div>
@@ -419,64 +450,82 @@
 </div>
 
 <script>
-  const API = 'https://api.tiklydown.eu.org/api/download/tweet?url=';
+  // Multiple APIs tried in order — if one fails, next is attempted
+  const APIS = [
+    {
+      name: 'tiklydown',
+      url: u => `https://api.tiklydown.eu.org/api/download/tweet?url=${encodeURIComponent(u)}`,
+      parse: data => {
+        const vids = data.video || data.media?.video || [];
+        if (!vids.length) return null;
+        return {
+          videos: vids.map(v => ({ url: v.url, width: v.width, height: v.height, size: v.size })),
+          text: data.text || '',
+          author: data.author?.name || '',
+          username: data.author?.screen_name || '',
+          thumb: data.thumbnail || null
+        };
+      }
+    },
+    {
+      name: 'twitsave',
+      url: u => `https://twitsave.com/info?url=${encodeURIComponent(u)}`,
+      parse: null // HTML scrape — skip, use as fallback link only
+    }
+  ];
 
   const QUALITY_LABELS = { 2160:'4K', 1440:'2K', 1080:'1080p', 720:'720p', 480:'480p', 360:'360p', 240:'240p' };
-
-  function qualityLabel(h) { return QUALITY_LABELS[h] || (h ? h + 'p' : '?'); }
-
+  function qualityLabel(h) { return QUALITY_LABELS[h] || (h ? h + 'p' : 'MP4'); }
   function badgeColor(h) {
     if (h >= 1080) return '#1D9BF0';
     if (h >= 720)  return '#10B981';
     if (h >= 480)  return '#F59E0B';
     return '#6B7280';
   }
-
   function isValidUrl(url) {
     return /^https?:\/\/(www\.)?(twitter\.com|x\.com)\/.+\/status\/\d+/.test(url.trim());
   }
 
-  // Elements
-  const urlInput     = document.getElementById('url-input');
-  const clearBtn     = document.getElementById('clear-btn');
-  const pasteBtn     = document.getElementById('paste-btn');
-  const fetchBtn     = document.getElementById('fetch-btn');
-  const progressBar  = document.getElementById('progress-bar');
-  const errorBox     = document.getElementById('error-box');
-  const errorMsg     = document.getElementById('error-msg');
-  const resultCard   = document.getElementById('result-card');
-  const hintBox      = document.getElementById('hint-box');
-  const qualityList  = document.getElementById('quality-list');
-  const qualityCount = document.getElementById('quality-count');
-  const authorName   = document.getElementById('author-name');
-  const authorHandle = document.getElementById('author-handle');
-  const tweetText    = document.getElementById('tweet-text');
-  const tweetThumb   = document.getElementById('tweet-thumb');
+  const urlInput    = document.getElementById('url-input');
+  const clearBtn    = document.getElementById('clear-btn');
+  const pasteBtn    = document.getElementById('paste-btn');
+  const fetchBtn    = document.getElementById('fetch-btn');
+  const progressBar = document.getElementById('progress-bar');
+  const statusLabel = document.getElementById('status-label');
+  const errorBox    = document.getElementById('error-box');
+  const errorMsg    = document.getElementById('error-msg');
+  const fallbackLinks = document.getElementById('fallback-links');
+  const resultCard  = document.getElementById('result-card');
+  const hintBox     = document.getElementById('hint-box');
+  const qualityList = document.getElementById('quality-list');
+  const qualityCount= document.getElementById('quality-count');
+  const authorName  = document.getElementById('author-name');
+  const authorHandle= document.getElementById('author-handle');
+  const tweetText   = document.getElementById('tweet-text');
+  const tweetThumb  = document.getElementById('tweet-thumb');
 
-  let downloadingIdx = null;
+  let downloading = false;
 
-  function setStatus(s) {
-    progressBar.style.display = s === 'loading' ? 'block' : 'none';
-    errorBox.style.display    = s === 'error'   ? 'flex'  : 'none';
-    resultCard.style.display  = s === 'success' ? 'block' : 'none';
-    hintBox.style.display     = s === 'idle'    ? 'grid'  : 'none';
-    fetchBtn.disabled         = s === 'loading';
-
-    if (s === 'loading') {
-      fetchBtn.innerHTML = '<span class="spinner"></span>';
-    } else {
-      fetchBtn.textContent = 'Fetch';
-    }
+  function setUI(s) {
+    progressBar.style.display  = s === 'loading' ? 'block' : 'none';
+    statusLabel.style.display  = s === 'loading' ? 'block' : 'none';
+    errorBox.style.display     = s === 'error'   ? 'flex'  : 'none';
+    resultCard.style.display   = s === 'success' ? 'block' : 'none';
+    hintBox.style.display      = s === 'idle'    ? 'grid'  : 'none';
+    fetchBtn.disabled          = s === 'loading';
+    fetchBtn.innerHTML         = s === 'loading' ? '<span class="spinner"></span>' : 'Fetch';
   }
 
-  function showError(msg) {
+  function showError(msg, tweetUrl) {
     errorMsg.textContent = msg;
-    setStatus('error');
-  }
-
-  function reset() {
-    qualityList.innerHTML = '';
-    setStatus('idle');
+    if (tweetUrl) {
+      const enc = encodeURIComponent(tweetUrl);
+      document.getElementById('link-saver').href = `https://www.savetweetvid.com/downloader?url=${enc}`;
+      document.getElementById('link-twdown').href = `https://twdown.net/download.php?URL=${enc}`;
+      document.getElementById('link-twittervideodownloader').href = `https://twittervideodownloader.com/?url=${enc}`;
+      fallbackLinks.style.display = 'flex';
+    }
+    setUI('error');
   }
 
   urlInput.addEventListener('input', () => {
@@ -486,126 +535,126 @@
   clearBtn.addEventListener('click', () => {
     urlInput.value = '';
     clearBtn.style.display = 'none';
-    reset();
+    setUI('idle');
     urlInput.focus();
   });
 
-  urlInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') doFetch();
-  });
+  urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') doFetch(); });
+  fetchBtn.addEventListener('click', doFetch);
 
   pasteBtn.addEventListener('click', async () => {
     try {
       const text = await navigator.clipboard.readText();
       urlInput.value = text;
       clearBtn.style.display = text ? 'block' : 'none';
-      urlInput.focus();
-    } catch {
-      urlInput.focus();
-    }
+    } catch { urlInput.focus(); }
   });
 
-  fetchBtn.addEventListener('click', doFetch);
+  async function tryApi(api, url) {
+    const res = await fetch(api.url(url), { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (data.error || data.status === 'error') throw new Error(data.message || 'API error');
+    if (!api.parse) throw new Error('no parser');
+    const parsed = api.parse(data);
+    if (!parsed) throw new Error('no videos found');
+    return parsed;
+  }
 
   async function doFetch() {
     const url = urlInput.value.trim();
     if (!url) return;
 
     if (!isValidUrl(url)) {
-      showError('Paste a valid Twitter/X post URL — e.g. https://x.com/user/status/123…');
+      showError('Paste a valid Twitter/X post URL — e.g. https://x.com/user/status/123…', null);
       return;
     }
 
     qualityList.innerHTML = '';
-    setStatus('loading');
+    fallbackLinks.style.display = 'none';
+    setUI('loading');
 
-    try {
-      const res = await fetch(API + encodeURIComponent(url));
-      if (!res.ok) throw new Error('Server returned ' + res.status);
-      const data = await res.json();
+    let result = null;
+    let lastError = '';
 
-      if (!data || data.error) {
-        throw new Error(data?.message || 'This tweet has no downloadable video, or is private.');
+    for (let i = 0; i < APIS.length; i++) {
+      const api = APIS[i];
+      if (!api.parse) continue;
+      statusLabel.textContent = `Trying source ${i + 1} of ${APIS.filter(a => a.parse).length}…`;
+      try {
+        result = await tryApi(api, url);
+        break;
+      } catch (e) {
+        lastError = e.message;
       }
-
-      const rawVideos = data.video || data.media?.video || [];
-      if (!rawVideos.length) {
-        throw new Error('No video found in this tweet. It may be image-only or protected.');
-      }
-
-      const sorted = [...rawVideos].sort((a, b) => (b.height || 0) - (a.height || 0));
-
-      // Populate tweet preview
-      const thumb = data.thumbnail || sorted[0]?.thumbnail || null;
-      if (thumb) {
-        tweetThumb.src = thumb;
-        tweetThumb.style.display = 'block';
-      } else {
-        tweetThumb.style.display = 'none';
-      }
-
-      authorName.textContent   = data.author?.name || data.user_name || '';
-      authorHandle.textContent = data.author?.screen_name ? '@' + data.author.screen_name : (data.screen_name ? '@' + data.screen_name : '');
-      const txt = data.text || data.description || '';
-      tweetText.textContent = txt.length > 160 ? txt.slice(0, 160) + '…' : txt;
-
-      qualityCount.textContent = sorted.length + ' option' + (sorted.length !== 1 ? 's' : '');
-
-      // Render quality rows
-      sorted.forEach((v, idx) => {
-        const row = document.createElement('div');
-        row.className = 'quality-row';
-
-        const info = document.createElement('div');
-        info.className = 'quality-info';
-
-        const badge = document.createElement('span');
-        badge.className = 'quality-badge';
-        badge.textContent = qualityLabel(v.height);
-        badge.style.background = badgeColor(v.height);
-
-        const dims = document.createElement('span');
-        dims.className = 'quality-dims';
-        let dimText = '';
-        if (v.width && v.height) dimText += v.width + '×' + v.height;
-        if (v.size) dimText += (dimText ? ' · ' : '') + (v.size / 1024 / 1024).toFixed(1) + ' MB';
-        dims.textContent = dimText;
-
-        info.appendChild(badge);
-        info.appendChild(dims);
-
-        const btn = document.createElement('button');
-        btn.className = 'dl-btn';
-        btn.innerHTML = '⬇ Download';
-        btn.dataset.idx = idx;
-        btn.addEventListener('click', () => handleDownload(v.url, idx, v.height, btn, sorted));
-
-        row.appendChild(info);
-        row.appendChild(btn);
-        qualityList.appendChild(row);
-      });
-
-      setStatus('success');
-
-    } catch (err) {
-      showError(err.message || 'Failed to fetch video. Check the URL and try again.');
     }
+
+    if (!result) {
+      showError('All sources failed — the API may be down or this tweet has no video. Try one of the links below:', url);
+      return;
+    }
+
+    // Render tweet preview
+    if (result.thumb) {
+      tweetThumb.src = result.thumb;
+      tweetThumb.style.display = 'block';
+    } else {
+      tweetThumb.style.display = 'none';
+    }
+    authorName.textContent   = result.author || '';
+    authorHandle.textContent = result.username ? '@' + result.username : '';
+    const txt = result.text || '';
+    tweetText.textContent = txt.length > 160 ? txt.slice(0, 160) + '…' : txt;
+
+    const sorted = [...result.videos].sort((a, b) => (b.height || 0) - (a.height || 0));
+    qualityCount.textContent = sorted.length + ' option' + (sorted.length !== 1 ? 's' : '');
+
+    sorted.forEach((v, idx) => {
+      const row = document.createElement('div');
+      row.className = 'quality-row';
+
+      const info = document.createElement('div');
+      info.className = 'quality-info';
+
+      const badge = document.createElement('span');
+      badge.className = 'quality-badge';
+      badge.textContent = qualityLabel(v.height);
+      badge.style.background = badgeColor(v.height);
+
+      const dims = document.createElement('span');
+      dims.className = 'quality-dims';
+      let d = '';
+      if (v.width && v.height) d += v.width + '×' + v.height;
+      if (v.size) d += (d ? ' · ' : '') + (v.size / 1024 / 1024).toFixed(1) + ' MB';
+      dims.textContent = d;
+
+      info.appendChild(badge);
+      info.appendChild(dims);
+
+      const btn = document.createElement('button');
+      btn.className = 'dl-btn';
+      btn.innerHTML = '⬇ Download';
+      btn.dataset.idx = idx;
+      btn.addEventListener('click', () => handleDownload(v.url, idx, v.height));
+
+      row.appendChild(info);
+      row.appendChild(btn);
+      qualityList.appendChild(row);
+    });
+
+    setUI('success');
   }
 
-  async function handleDownload(videoUrl, idx, height, btn, allVideos) {
-    if (downloadingIdx !== null) return;
-    downloadingIdx = idx;
-
-    // Disable all download buttons
+  async function handleDownload(videoUrl, idx, height) {
+    if (downloading) return;
+    downloading = true;
     document.querySelectorAll('.dl-btn').forEach(b => {
       b.disabled = true;
-      if (parseInt(b.dataset.idx) === idx) {
-        b.innerHTML = '<span class="spinner spinner-sm"></span> Saving…';
-      }
+      if (parseInt(b.dataset.idx) === idx) b.innerHTML = '<span class="spinner"></span> Saving…';
     });
 
     try {
-      const res = await fetch(videoUrl);
+      const res = await fetch(videoUrl, { signal: AbortSignal.timeout(30000) });
       if (!res.ok) throw new Error('fetch failed');
       const blob = await res.blob();
       const blobUrl = URL.createObjectURL(blob);
@@ -617,20 +666,17 @@
       document.body.removeChild(a);
       setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
     } catch {
-      // CORS fallback — open direct link in new tab
       window.open(videoUrl, '_blank');
     } finally {
-      downloadingIdx = null;
+      downloading = false;
       document.querySelectorAll('.dl-btn').forEach(b => {
         b.disabled = false;
-        const i = parseInt(b.dataset.idx);
         b.innerHTML = '⬇ Download';
       });
     }
   }
 
-  // Init
-  setStatus('idle');
+  setUI('idle');
 </script>
 </body>
 </html>
