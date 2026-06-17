@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <title>X Video Downloader</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,6 +25,7 @@
     }
     h1 { font-size: 22px; font-weight: 700; color: #F1F5F9; letter-spacing: -0.3px; }
     .subtitle { font-size: 13px; color: #64748B; margin-top: 4px; }
+
     .input-row { display: flex; gap: 8px; }
     .input-wrap {
       flex: 1; display: flex; align-items: center;
@@ -51,17 +51,27 @@
       background: #161B22; border: 1px solid #21262D;
       border-radius: 10px; padding: 0 14px; cursor: pointer;
       font-size: 16px; color: #94A3B8; flex-shrink: 0;
+      transition: background 0.15s;
     }
+    #paste-btn:hover { background: #1C2330; }
     #fetch-btn {
       background: #1D9BF0; border: none; border-radius: 10px;
       padding: 0 22px; color: white; font-weight: 600; font-size: 14px;
       cursor: pointer; flex-shrink: 0; display: flex;
       align-items: center; gap: 6px; white-space: nowrap; min-height: 46px;
+      transition: background 0.15s;
     }
+    #fetch-btn:hover:not(:disabled) { background: #1a8fd8; }
     #fetch-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* Status bar */
+    .status-bar {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+    }
     .progress-bar {
-      height: 3px; background: #1E2A38; border-radius: 2px;
-      overflow: hidden; display: none;
+      height: 3px; background: #1E2A38; border-radius: 2px; overflow: hidden;
     }
     .progress-fill {
       height: 100%; width: 40%;
@@ -69,17 +79,31 @@
       background-size: 200% 100%; border-radius: 2px;
       animation: shimmer 1.2s linear infinite;
     }
+    .status-text {
+      font-size: 12px; color: #475569; text-align: center;
+    }
+
+    /* Error */
     .error-box {
       background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);
       border-radius: 10px; padding: 14px 16px; font-size: 13px;
-      color: #FCA5A5; display: none; flex-direction: column; gap: 6px;
+      color: #FCA5A5; display: none; flex-direction: column; gap: 8px;
     }
     .error-top { display: flex; align-items: flex-start; gap: 8px; }
     .debug-info {
       font-size: 11px; color: #64748B; font-family: monospace;
       background: rgba(0,0,0,0.3); border-radius: 6px;
-      padding: 8px 10px; line-height: 1.6;
+      padding: 8px 10px; line-height: 1.6; display: none;
     }
+
+    /* iPhone save tip */
+    .save-tip {
+      background: rgba(29,155,240,0.1); border: 1px solid rgba(29,155,240,0.25);
+      border-radius: 10px; padding: 12px 16px; font-size: 13px;
+      color: #93C5FD; display: none; align-items: flex-start; gap: 8px;
+    }
+
+    /* Result card */
     .result-card {
       background: #161B22; border: 1px solid #21262D;
       border-radius: 14px; overflow: hidden; display: none;
@@ -94,7 +118,7 @@
       background: #0D1117; display: none;
     }
     .tweet-meta { flex: 1; min-width: 0; }
-    .author-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .author-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
     .author-name { font-weight: 600; font-size: 14px; color: #F1F5F9; }
     .author-handle { font-size: 13px; color: #64748B; }
     .tweet-text {
@@ -126,13 +150,41 @@
     .dl-btn {
       background: #1D9BF0; border: none; border-radius: 7px;
       padding: 8px 14px; color: white; font-size: 13px; font-weight: 600;
-      cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap;
+      cursor: pointer; display: flex; align-items: center; gap: 6px;
+      white-space: nowrap; transition: background 0.15s;
     }
+    .dl-btn:hover:not(:disabled) { background: #1a8fd8; }
     .dl-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .disclaimer {
       padding: 10px 18px 14px; font-size: 11px;
       color: #334155; border-top: 1px solid #1A222E;
     }
+
+    /* Recent URLs */
+    .recent-section { display: none; flex-direction: column; gap: 6px; }
+    .recent-label {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #334155;
+    }
+    .recent-item {
+      display: flex; align-items: center; gap: 8px;
+      background: #161B22; border: 1px solid #1E2A38;
+      border-radius: 8px; padding: 9px 12px; cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .recent-item:hover { border-color: #2D3F55; }
+    .recent-item-text {
+      flex: 1; font-size: 12px; color: #64748B;
+      font-family: monospace; overflow: hidden;
+      text-overflow: ellipsis; white-space: nowrap;
+    }
+    .recent-item-del {
+      background: none; border: none; color: #334155;
+      cursor: pointer; font-size: 13px; padding: 2px 4px; flex-shrink: 0;
+    }
+    .recent-item-del:hover { color: #94A3B8; }
+
+    /* Hints */
     .hint-box { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .hint-item {
       display: flex; align-items: center; gap: 10px;
@@ -141,11 +193,13 @@
       font-size: 13px; color: #94A3B8;
     }
     .hint-icon { font-size: 18px; flex-shrink: 0; }
+
     .spinner {
       display: inline-block; width: 14px; height: 14px;
       border: 2px solid rgba(255,255,255,0.3); border-top-color: white;
       border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0;
     }
+
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes shimmer {
       0%   { background-position: 200% 0; }
@@ -159,6 +213,7 @@
 </head>
 <body>
 <div class="container">
+
   <div class="header">
     <div class="logo">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
@@ -181,11 +236,19 @@
     <button id="fetch-btn">Fetch</button>
   </div>
 
-  <div class="progress-bar" id="progress-bar"><div class="progress-fill"></div></div>
+  <div class="status-bar" id="status-bar">
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+    <div class="status-text" id="status-text">Fetching…</div>
+  </div>
 
   <div class="error-box" id="error-box">
     <div class="error-top"><span>⚠️</span><span id="error-msg"></span></div>
-    <div class="debug-info" id="debug-info" style="display:none"></div>
+    <div class="debug-info" id="debug-info"></div>
+  </div>
+
+  <div class="save-tip" id="save-tip">
+    <span>📱</span>
+    <span>Video opened in a new tab. On iPhone: <strong>long-press the video → Save to Photos</strong> or tap Share → Save to Files.</span>
   </div>
 
   <div class="result-card" id="result-card">
@@ -207,37 +270,54 @@
     <p class="disclaimer">Downloads are for personal use only. Respect content creators and platform ToS.</p>
   </div>
 
+  <div class="recent-section" id="recent-section">
+    <div class="recent-label">Recent</div>
+    <div id="recent-list"></div>
+  </div>
+
   <div class="hint-box" id="hint-box">
     <div class="hint-item"><span class="hint-icon">📎</span><span>Works with twitter.com and x.com links</span></div>
-    <div class="hint-item"><span class="hint-icon">🎬</span><span>Direct from Twitter's CDN — no middleman</span></div>
+    <div class="hint-item"><span class="hint-icon">🎬</span><span>All qualities — 4K down to 240p</span></div>
     <div class="hint-item"><span class="hint-icon">🔒</span><span>Public tweets only</span></div>
-    <div class="hint-item"><span class="hint-icon">⚡</span><span>No sign-in required</span></div>
+    <div class="hint-item"><span class="hint-icon">⚡</span><span>Auto-fetches when you paste</span></div>
   </div>
-</div>
 
+</div>
 <script>
-// ─── Token algorithm (matches Twitter's embed JS exactly) ───────────────────
-function getToken(tweetId) {
-  // Twitter computes: Math.floor((BigInt(id) * BigInt(Math.PI * 1e5)) / BigInt(1e15))
-  // In JS we approximate with floats since we don't have BigInt π
-  const id = BigInt(tweetId);
-  const PI_scaled = BigInt(Math.round(Math.PI * 1e5)); // 314159
-  const token = (id * PI_scaled) / BigInt(1e15);
-  return token.toString();
+// ─── Token (BigInt, matches Twitter embed JS) ────────────────────────────────
+function getToken(id) {
+  return ((BigInt(id) * BigInt(314159)) / BigInt(1e15)).toString();
 }
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
+// ─── Proxies tried in order ──────────────────────────────────────────────────
+function buildProxyUrls(target) {
+  const enc = encodeURIComponent(target);
+  return [
+    `https://corsproxy.io/?${enc}`,
+    `https://api.allorigins.win/get?url=${enc}`,
+    `https://thingproxy.freeboard.io/fetch/${target}`,
+  ];
+}
+
+// Parse proxy response (allorigins wraps in {contents:...}, others return raw)
+function parseProxyResponse(text, proxyUrl) {
+  if (proxyUrl.includes('allorigins')) {
+    const wrapped = JSON.parse(text);
+    return JSON.parse(wrapped.contents);
+  }
+  return JSON.parse(text);
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 function extractId(url) {
   const m = url.match(/status\/(\d+)/);
   return m ? m[1] : null;
 }
-
 function isValidUrl(url) {
   return /^https?:\/\/(www\.)?(twitter\.com|x\.com|mobile\.twitter\.com)\/.+\/status\/\d+/.test(url.trim());
 }
-
-const Q_LABELS = {2160:'4K',1440:'2K',1080:'1080p',720:'720p',480:'480p',360:'360p',270:'270p',240:'240p'};
-function qLabel(h) { return Q_LABELS[h] || (h ? h+'p' : 'MP4'); }
+const QL = {2160:'4K',1440:'2K',1080:'1080p',720:'720p',480:'480p',360:'360p',270:'270p',240:'240p'};
+function qLabel(h) { return QL[h] || (h ? h+'p' : 'MP4'); }
 function qColor(h) {
   if (h >= 1080) return '#1D9BF0';
   if (h >= 720)  return '#10B981';
@@ -245,15 +325,62 @@ function qColor(h) {
   return '#6B7280';
 }
 
+// ─── Recent history ──────────────────────────────────────────────────────────
+const HISTORY_KEY = 'xdl_history';
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch { return []; }
+}
+function saveToHistory(url) {
+  let h = getHistory().filter(u => u !== url);
+  h.unshift(url);
+  h = h.slice(0, 5);
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(h)); } catch {}
+  renderHistory();
+}
+function removeFromHistory(url) {
+  const h = getHistory().filter(u => u !== url);
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(h)); } catch {}
+  renderHistory();
+}
+function renderHistory() {
+  const h = getHistory();
+  const section = document.getElementById('recent-section');
+  const list = document.getElementById('recent-list');
+  if (!h.length) { section.style.display = 'none'; return; }
+  section.style.display = 'flex';
+  list.innerHTML = '';
+  h.forEach(url => {
+    const row = document.createElement('div');
+    row.className = 'recent-item';
+    const txt = document.createElement('span');
+    txt.className = 'recent-item-text';
+    txt.textContent = url;
+    txt.addEventListener('click', () => {
+      document.getElementById('url-input').value = url;
+      document.getElementById('clear-btn').style.display = 'block';
+      doFetch();
+    });
+    const del = document.createElement('button');
+    del.className = 'recent-item-del';
+    del.textContent = '✕';
+    del.addEventListener('click', e => { e.stopPropagation(); removeFromHistory(url); });
+    row.appendChild(txt);
+    row.appendChild(del);
+    list.appendChild(row);
+  });
+}
+
 // ─── DOM refs ────────────────────────────────────────────────────────────────
 const urlInput    = document.getElementById('url-input');
 const clearBtn    = document.getElementById('clear-btn');
 const pasteBtn    = document.getElementById('paste-btn');
 const fetchBtn    = document.getElementById('fetch-btn');
-const progressBar = document.getElementById('progress-bar');
+const statusBar   = document.getElementById('status-bar');
+const statusText  = document.getElementById('status-text');
 const errorBox    = document.getElementById('error-box');
 const errorMsg    = document.getElementById('error-msg');
 const debugInfo   = document.getElementById('debug-info');
+const saveTip     = document.getElementById('save-tip');
 const resultCard  = document.getElementById('result-card');
 const hintBox     = document.getElementById('hint-box');
 const qualityList = document.getElementById('quality-list');
@@ -264,31 +391,36 @@ const tweetText   = document.getElementById('tweet-text');
 const tweetThumb  = document.getElementById('tweet-thumb');
 
 let downloading = false;
+let autoFetchTimer = null;
 
 // ─── UI state ────────────────────────────────────────────────────────────────
 function setUI(s) {
-  progressBar.style.display = s === 'loading' ? 'block' : 'none';
-  errorBox.style.display    = s === 'error'   ? 'flex'  : 'none';
-  resultCard.style.display  = s === 'success' ? 'block' : 'none';
-  hintBox.style.display     = s === 'idle'    ? 'grid'  : 'none';
-  fetchBtn.disabled         = s === 'loading';
-  fetchBtn.innerHTML        = s === 'loading' ? '<span class="spinner"></span>' : 'Fetch';
+  statusBar.style.display  = s === 'loading' ? 'flex'  : 'none';
+  errorBox.style.display   = s === 'error'   ? 'flex'  : 'none';
+  resultCard.style.display = s === 'success' ? 'block' : 'none';
+  hintBox.style.display    = s === 'idle'    ? 'grid'  : 'none';
+  saveTip.style.display    = 'none';
+  fetchBtn.disabled        = s === 'loading';
+  fetchBtn.innerHTML       = s === 'loading' ? '<span class="spinner"></span>' : 'Fetch';
+  if (s === 'idle') renderHistory();
 }
-
+function setStatus(msg) { statusText.textContent = msg; }
 function showError(msg, debug) {
   errorMsg.textContent = msg;
-  if (debug) {
-    debugInfo.textContent = debug;
-    debugInfo.style.display = 'block';
-  } else {
-    debugInfo.style.display = 'none';
-  }
+  if (debug) { debugInfo.textContent = debug; debugInfo.style.display = 'block'; }
+  else { debugInfo.style.display = 'none'; }
   setUI('error');
 }
 
 // ─── Events ──────────────────────────────────────────────────────────────────
 urlInput.addEventListener('input', () => {
-  clearBtn.style.display = urlInput.value ? 'block' : 'none';
+  const v = urlInput.value;
+  clearBtn.style.display = v ? 'block' : 'none';
+  // Auto-fetch if a full valid URL is typed/pasted
+  clearTimeout(autoFetchTimer);
+  if (isValidUrl(v)) {
+    autoFetchTimer = setTimeout(doFetch, 600);
+  }
 });
 
 clearBtn.addEventListener('click', () => {
@@ -298,14 +430,20 @@ clearBtn.addEventListener('click', () => {
   urlInput.focus();
 });
 
-urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') doFetch(); });
-fetchBtn.addEventListener('click', doFetch);
+urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') { clearTimeout(autoFetchTimer); doFetch(); } });
+fetchBtn.addEventListener('click', () => { clearTimeout(autoFetchTimer); doFetch(); });
 
 pasteBtn.addEventListener('click', async () => {
   try {
     const text = await navigator.clipboard.readText();
-    urlInput.value = text;
-    clearBtn.style.display = text ? 'block' : 'none';
+    if (text) {
+      urlInput.value = text;
+      clearBtn.style.display = 'block';
+      if (isValidUrl(text)) {
+        clearTimeout(autoFetchTimer);
+        doFetch();
+      }
+    }
   } catch { urlInput.focus(); }
 });
 
@@ -313,12 +451,10 @@ pasteBtn.addEventListener('click', async () => {
 async function doFetch() {
   const raw = urlInput.value.trim();
   if (!raw) return;
-
   if (!isValidUrl(raw)) {
     showError('Paste a valid Twitter/X post URL — e.g. https://x.com/user/status/123…');
     return;
   }
-
   const id = extractId(raw);
   if (!id) { showError("Couldn't extract tweet ID from that URL."); return; }
 
@@ -326,84 +462,69 @@ async function doFetch() {
   setUI('loading');
 
   const token = getToken(id);
-
-  // Strategy 1: Twitter syndication CDN (CORS-open, no auth needed)
-  const syndicationUrl =
-    `https://cdn.syndication.twimg.com/tweet-result?id=${id}&lang=en&token=${token}&features=tfw_timeline_list%3A%3Btfw_follower_count_sunset%3Atrue`;
-
-  // Strategy 2: Fallback via allorigins CORS proxy → same syndication endpoint
-  const proxyUrl =
-    `https://api.allorigins.win/get?url=${encodeURIComponent(syndicationUrl)}`;
+  const targetUrl = `https://cdn.syndication.twimg.com/tweet-result?id=${id}&lang=en&token=${token}&features=tfw_timeline_list%3A%3Btfw_follower_count_sunset%3Atrue`;
 
   let data = null;
-  let usedProxy = false;
+  let errors = [];
 
-  // --- Try direct first ---
+  // 1. Direct (works when there's no Referer restriction)
+  setStatus('Connecting to Twitter…');
   try {
-    const res = await fetch(syndicationUrl, { signal: AbortSignal.timeout(8000) });
-    if (res.ok) {
-      data = await res.json();
-    } else {
-      throw new Error('direct HTTP ' + res.status);
-    }
-  } catch (e1) {
-    // --- Try via CORS proxy ---
-    try {
-      const res2 = await fetch(proxyUrl, { signal: AbortSignal.timeout(10000) });
-      if (!res2.ok) throw new Error('proxy HTTP ' + res2.status);
-      const wrapped = await res2.json();
-      data = JSON.parse(wrapped.contents);
-      usedProxy = true;
-    } catch (e2) {
-      showError(
-        'Could not reach Twitter\'s servers. Check your connection and try again.',
-        `Direct: ${e1.message} | Proxy: ${e2.message} | ID: ${id} | Token: ${token}`
-      );
-      return;
+    const res = await fetch(targetUrl, {
+      signal: AbortSignal.timeout(7000),
+      headers: { 'User-Agent': 'Mozilla/5.0' }
+    });
+    if (res.ok) { data = await res.json(); }
+    else errors.push('direct:' + res.status);
+  } catch(e) { errors.push('direct:' + e.message); }
+
+  // 2-4. CORS proxies
+  if (!data) {
+    const proxies = buildProxyUrls(targetUrl);
+    for (let i = 0; i < proxies.length; i++) {
+      setStatus(`Trying route ${i + 2} of ${proxies.length + 1}…`);
+      try {
+        const res = await fetch(proxies[i], { signal: AbortSignal.timeout(9000) });
+        if (!res.ok) { errors.push(`proxy${i+1}:${res.status}`); continue; }
+        const text = await res.text();
+        data = parseProxyResponse(text, proxies[i]);
+        break;
+      } catch(e) { errors.push(`proxy${i+1}:${e.message}`); }
     }
   }
 
-  // --- Parse response ---
   if (!data) {
-    showError('Empty response from Twitter. The tweet may be deleted.');
+    showError(
+      'Could not reach Twitter. This can happen if your network blocks certain requests. Try on WiFi or mobile data.',
+      errors.join(' | ') + ' | token:' + token
+    );
     return;
   }
 
   if (data.__typename === 'TweetTombstone' || data.tombstone) {
-    const reason = data.tombstone?.text?.text || 'This tweet is unavailable (age-restricted or protected account).';
+    const reason = data.tombstone?.text?.text || 'This tweet is unavailable (deleted, age-restricted, or private account).';
     showError(reason);
     return;
   }
 
-  // Find video — check mediaDetails, then card, then extended_entities
+  // ─── Extract video variants ─────────────────────────────────────────────
   let variants = [];
   let thumb = null;
 
-  // Path 1: mediaDetails array (most reliable)
-  const mediaDetails = data.mediaDetails || [];
-  for (const m of mediaDetails) {
+  // Path A: mediaDetails
+  for (const m of (data.mediaDetails || [])) {
     if ((m.type === 'video' || m.type === 'animated_gif') && m.video_info?.variants) {
       variants = m.video_info.variants.filter(v => v.content_type === 'video/mp4');
       thumb = m.media_url_https || m.media_url;
       break;
     }
   }
-
-  // Path 2: card (video card e.g. native video)
-  if (!variants.length && data.card?.legacy?.binding_values) {
-    const bv = data.card.legacy.binding_values;
-    const playerUrl = bv.find(b => b.key === 'player_url')?.value?.string_value;
-    if (playerUrl) {
-      // Can't get direct MP4 from card without auth — skip
-    }
-  }
-
-  // Path 3: extended_entities
-  if (!variants.length && data.extended_entities?.media) {
-    for (const m of data.extended_entities.media) {
+  // Path B: extended_entities
+  if (!variants.length) {
+    for (const m of (data.extended_entities?.media || [])) {
       if (m.video_info?.variants) {
         variants = m.video_info.variants.filter(v => v.content_type === 'video/mp4');
-        thumb = m.media_url_https || m.media_url;
+        thumb = m.media_url_https;
         break;
       }
     }
@@ -411,78 +532,52 @@ async function doFetch() {
 
   if (!variants.length) {
     showError(
-      'No video found in this tweet — it may be image-only or text-only.',
-      'typename: ' + (data.__typename || 'unknown') + ' | media count: ' + mediaDetails.length
+      'No video found — this tweet may be image-only or text-only.',
+      'typename:' + (data.__typename||'?') + ' media:' + (data.mediaDetails||[]).length
     );
     return;
   }
 
-  // Sort by bitrate descending
-  const videos = variants
-    .map(v => {
-      const m = v.url.match(/\/(\d+)x(\d+)\//);
-      return {
-        url: v.url.split('?')[0], // strip query params for cleaner download
-        bitrate: v.bitrate || 0,
-        width:  m ? parseInt(m[1]) : null,
-        height: m ? parseInt(m[2]) : null,
-      };
-    })
-    .sort((a, b) => b.bitrate - a.bitrate);
+  const videos = variants.map(v => {
+    const m = v.url.match(/\/(\d+)x(\d+)\//);
+    return {
+      url: v.url.split('?')[0],
+      bitrate: v.bitrate || 0,
+      width: m ? parseInt(m[1]) : null,
+      height: m ? parseInt(m[2]) : null,
+    };
+  }).sort((a, b) => b.bitrate - a.bitrate);
 
-  // --- Render preview ---
-  if (thumb) {
-    tweetThumb.src = thumb;
-    tweetThumb.style.display = 'block';
-  } else {
-    tweetThumb.style.display = 'none';
-  }
-
-  authorName.textContent   = data.user?.name || data.core?.user_results?.result?.legacy?.name || '';
-  const sn = data.user?.screen_name || data.core?.user_results?.result?.legacy?.screen_name || '';
+  // ─── Render preview ─────────────────────────────────────────────────────
+  if (thumb) { tweetThumb.src = thumb; tweetThumb.style.display = 'block'; }
+  else { tweetThumb.style.display = 'none'; }
+  authorName.textContent   = data.user?.name || '';
+  const sn = data.user?.screen_name || '';
   authorHandle.textContent = sn ? '@' + sn : '';
-  const txt = data.text || data.full_text || data.legacy?.full_text || '';
+  const txt = data.text || data.full_text || '';
   tweetText.textContent    = txt.length > 160 ? txt.slice(0, 160) + '…' : txt;
-
   qualityCount.textContent = videos.length + ' option' + (videos.length !== 1 ? 's' : '');
-  if (usedProxy) qualityCount.textContent += ' (via proxy)';
 
-  // --- Render quality rows ---
   videos.forEach((v, idx) => {
     const labelH = v.width && v.height ? Math.min(v.width, v.height) : null;
-
-    const row = document.createElement('div');
-    row.className = 'quality-row';
-
-    const info = document.createElement('div');
-    info.className = 'quality-info';
-
-    const badge = document.createElement('span');
-    badge.className = 'quality-badge';
-    badge.textContent = qLabel(labelH);
-    badge.style.background = qColor(labelH || 0);
-
-    const dims = document.createElement('span');
-    dims.className = 'quality-dims';
+    const row  = document.createElement('div');  row.className = 'quality-row';
+    const info = document.createElement('div');  info.className = 'quality-info';
+    const badge = document.createElement('span'); badge.className = 'quality-badge';
+    badge.textContent = qLabel(labelH); badge.style.background = qColor(labelH || 0);
+    const dims = document.createElement('span'); dims.className = 'quality-dims';
     let d = '';
     if (v.width && v.height) d += v.width + '×' + v.height;
-    if (v.bitrate) d += (d ? ' · ' : '') + Math.round(v.bitrate / 1000) + ' kbps';
+    if (v.bitrate) d += (d ? ' · ' : '') + Math.round(v.bitrate/1000) + ' kbps';
     dims.textContent = d;
-
-    info.appendChild(badge);
-    info.appendChild(dims);
-
-    const btn = document.createElement('button');
-    btn.className = 'dl-btn';
-    btn.innerHTML = '⬇ Download';
-    btn.dataset.idx = idx;
+    info.appendChild(badge); info.appendChild(dims);
+    const btn = document.createElement('button'); btn.className = 'dl-btn';
+    btn.innerHTML = '⬇ Download'; btn.dataset.idx = idx;
     btn.addEventListener('click', () => handleDownload(v.url, idx, labelH));
-
-    row.appendChild(info);
-    row.appendChild(btn);
+    row.appendChild(info); row.appendChild(btn);
     qualityList.appendChild(row);
   });
 
+  saveToHistory(raw);
   setUI('success');
 }
 
@@ -490,6 +585,7 @@ async function doFetch() {
 async function handleDownload(videoUrl, idx, height) {
   if (downloading) return;
   downloading = true;
+  saveTip.style.display = 'none';
 
   document.querySelectorAll('.dl-btn').forEach(b => {
     b.disabled = true;
@@ -498,7 +594,7 @@ async function handleDownload(videoUrl, idx, height) {
 
   try {
     const res = await fetch(videoUrl, { signal: AbortSignal.timeout(60000) });
-    if (!res.ok) throw new Error('fetch failed');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const blob = await res.blob();
     const blobUrl = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -509,8 +605,9 @@ async function handleDownload(videoUrl, idx, height) {
     document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
   } catch {
-    // Fallback: open direct MP4 link — on iPhone long-press → Save to Files
+    // Open direct MP4 and show iPhone tip
     window.open(videoUrl, '_blank');
+    saveTip.style.display = 'flex';
   } finally {
     downloading = false;
     document.querySelectorAll('.dl-btn').forEach(b => {
@@ -520,6 +617,7 @@ async function handleDownload(videoUrl, idx, height) {
   }
 }
 
+// ─── Init ────────────────────────────────────────────────────────────────────
 setUI('idle');
 </script>
 </body>
