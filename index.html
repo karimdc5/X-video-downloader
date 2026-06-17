@@ -51,39 +51,26 @@
       background: #161B22; border: 1px solid #21262D;
       border-radius: 10px; padding: 0 14px; cursor: pointer;
       font-size: 16px; color: #94A3B8; flex-shrink: 0;
-      transition: background 0.15s;
     }
-    #paste-btn:hover { background: #1C2330; }
     #fetch-btn {
       background: #1D9BF0; border: none; border-radius: 10px;
       padding: 0 22px; color: white; font-weight: 600; font-size: 14px;
       cursor: pointer; flex-shrink: 0; display: flex;
       align-items: center; gap: 6px; white-space: nowrap; min-height: 46px;
-      transition: background 0.15s;
     }
     #fetch-btn:hover:not(:disabled) { background: #1a8fd8; }
     #fetch-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-    /* Status bar */
-    .status-bar {
-      display: none;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .progress-bar {
-      height: 3px; background: #1E2A38; border-radius: 2px; overflow: hidden;
-    }
+    .status-bar { display: none; flex-direction: column; gap: 6px; }
+    .progress-bar { height: 3px; background: #1E2A38; border-radius: 2px; overflow: hidden; }
     .progress-fill {
       height: 100%; width: 40%;
       background: linear-gradient(90deg, #1D9BF0, #60BFFF, #1D9BF0);
       background-size: 200% 100%; border-radius: 2px;
       animation: shimmer 1.2s linear infinite;
     }
-    .status-text {
-      font-size: 12px; color: #475569; text-align: center;
-    }
+    .status-text { font-size: 12px; color: #475569; text-align: center; }
 
-    /* Error */
     .error-box {
       background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);
       border-radius: 10px; padding: 14px 16px; font-size: 13px;
@@ -96,14 +83,81 @@
       padding: 8px 10px; line-height: 1.6; display: none;
     }
 
-    /* iPhone save tip */
-    .save-tip {
-      background: rgba(29,155,240,0.1); border: 1px solid rgba(29,155,240,0.25);
-      border-radius: 10px; padding: 12px 16px; font-size: 13px;
-      color: #93C5FD; display: none; align-items: flex-start; gap: 8px;
+    /* Download progress overlay */
+    .dl-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
     }
+    .dl-overlay.show { display: flex; }
+    .dl-modal {
+      background: #161B22;
+      border: 1px solid #21262D;
+      border-radius: 20px;
+      padding: 28px 24px;
+      width: 100%;
+      max-width: 340px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+    }
+    .dl-modal-icon { font-size: 40px; }
+    .dl-modal-title { font-size: 17px; font-weight: 700; color: #F1F5F9; }
+    .dl-modal-sub { font-size: 13px; color: #64748B; line-height: 1.5; }
+    .dl-bar-wrap {
+      width: 100%;
+      height: 6px;
+      background: #1E2A38;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .dl-bar {
+      height: 100%;
+      width: 0%;
+      background: #1D9BF0;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+    .dl-percent { font-size: 13px; color: #1D9BF0; font-weight: 600; }
 
-    /* Result card */
+    /* iOS download tip card */
+    .ios-tip {
+      display: none;
+      background: #161B22;
+      border: 1px solid #21262D;
+      border-radius: 14px;
+      padding: 16px 18px;
+      gap: 14px;
+      flex-direction: column;
+    }
+    .ios-tip-header {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .ios-tip-title { font-size: 14px; font-weight: 600; color: #F1F5F9; }
+    .ios-steps { display: flex; flex-direction: column; gap: 10px; }
+    .ios-step {
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .step-num {
+      width: 22px; height: 22px;
+      background: #1D9BF0;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: white;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .step-text { font-size: 13px; color: #94A3B8; line-height: 1.5; }
+    .step-text strong { color: #E2E8F0; }
+
     .result-card {
       background: #161B22; border: 1px solid #21262D;
       border-radius: 14px; overflow: hidden; display: none;
@@ -150,8 +204,7 @@
     .dl-btn {
       background: #1D9BF0; border: none; border-radius: 7px;
       padding: 8px 14px; color: white; font-size: 13px; font-weight: 600;
-      cursor: pointer; display: flex; align-items: center; gap: 6px;
-      white-space: nowrap; transition: background 0.15s;
+      cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap;
     }
     .dl-btn:hover:not(:disabled) { background: #1a8fd8; }
     .dl-btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -160,7 +213,7 @@
       color: #334155; border-top: 1px solid #1A222E;
     }
 
-    /* Recent URLs */
+    /* Recent */
     .recent-section { display: none; flex-direction: column; gap: 6px; }
     .recent-label {
       font-size: 11px; font-weight: 600; text-transform: uppercase;
@@ -170,7 +223,6 @@
       display: flex; align-items: center; gap: 8px;
       background: #161B22; border: 1px solid #1E2A38;
       border-radius: 8px; padding: 9px 12px; cursor: pointer;
-      transition: border-color 0.15s;
     }
     .recent-item:hover { border-color: #2D3F55; }
     .recent-item-text {
@@ -182,9 +234,7 @@
       background: none; border: none; color: #334155;
       cursor: pointer; font-size: 13px; padding: 2px 4px; flex-shrink: 0;
     }
-    .recent-item-del:hover { color: #94A3B8; }
 
-    /* Hints */
     .hint-box { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .hint-item {
       display: flex; align-items: center; gap: 10px;
@@ -199,7 +249,6 @@
       border: 2px solid rgba(255,255,255,0.3); border-top-color: white;
       border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes shimmer {
       0%   { background-position: 200% 0; }
@@ -212,8 +261,19 @@
   </style>
 </head>
 <body>
-<div class="container">
 
+<!-- Download progress overlay -->
+<div class="dl-overlay" id="dl-overlay">
+  <div class="dl-modal">
+    <div class="dl-modal-icon">⬇️</div>
+    <div class="dl-modal-title" id="dl-modal-title">Downloading…</div>
+    <div class="dl-bar-wrap"><div class="dl-bar" id="dl-bar"></div></div>
+    <div class="dl-percent" id="dl-percent">0%</div>
+    <div class="dl-modal-sub" id="dl-modal-sub">Fetching video from Twitter…</div>
+  </div>
+</div>
+
+<div class="container">
   <div class="header">
     <div class="logo">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
@@ -222,7 +282,7 @@
     </div>
     <div>
       <h1>X Video Downloader</h1>
-      <p class="subtitle">Paste a post URL · pick your quality · save MP4</p>
+      <p class="subtitle">Paste a post URL · pick quality · saves to Downloads</p>
     </div>
   </div>
 
@@ -238,7 +298,7 @@
 
   <div class="status-bar" id="status-bar">
     <div class="progress-bar"><div class="progress-fill"></div></div>
-    <div class="status-text" id="status-text">Fetching…</div>
+    <div class="status-text" id="status-text">Connecting…</div>
   </div>
 
   <div class="error-box" id="error-box">
@@ -246,9 +306,22 @@
     <div class="debug-info" id="debug-info"></div>
   </div>
 
-  <div class="save-tip" id="save-tip">
-    <span>📱</span>
-    <span>Video opened in a new tab. On iPhone: <strong>long-press the video → Save to Photos</strong> or tap Share → Save to Files.</span>
+  <!-- iOS tip shown after download completes -->
+  <div class="ios-tip" id="ios-tip">
+    <div class="ios-tip-header">
+      <span style="font-size:22px">📥</span>
+      <span class="ios-tip-title">Video saved to Downloads!</span>
+    </div>
+    <div class="ios-steps">
+      <div class="ios-step">
+        <div class="step-num">1</div>
+        <div class="step-text">Tap the <strong>⬇ button</strong> in the top-right of Safari</div>
+      </div>
+      <div class="ios-step">
+        <div class="step-num">2</div>
+        <div class="step-text">Tap your file to open it, or tap <strong>Share → Save to Photos</strong></div>
+      </div>
+    </div>
   </div>
 
   <div class="result-card" id="result-card">
@@ -267,7 +340,7 @@
       <span class="quality-count" id="quality-count"></span>
     </div>
     <div class="quality-list" id="quality-list"></div>
-    <p class="disclaimer">Downloads are for personal use only. Respect content creators and platform ToS.</p>
+    <p class="disclaimer">Downloads are for personal use only. Respect content creators and ToS.</p>
   </div>
 
   <div class="recent-section" id="recent-section">
@@ -276,43 +349,32 @@
   </div>
 
   <div class="hint-box" id="hint-box">
-    <div class="hint-item"><span class="hint-icon">📎</span><span>Works with twitter.com and x.com links</span></div>
-    <div class="hint-item"><span class="hint-icon">🎬</span><span>All qualities — 4K down to 240p</span></div>
-    <div class="hint-item"><span class="hint-icon">🔒</span><span>Public tweets only</span></div>
+    <div class="hint-item"><span class="hint-icon">📎</span><span>Paste any x.com or twitter.com link</span></div>
+    <div class="hint-item"><span class="hint-icon">📥</span><span>Saves directly to Safari Downloads</span></div>
+    <div class="hint-item"><span class="hint-icon">🎬</span><span>All qualities up to 1080p</span></div>
     <div class="hint-item"><span class="hint-icon">⚡</span><span>Auto-fetches when you paste</span></div>
   </div>
-
 </div>
+
 <script>
-// ─── Token (BigInt, matches Twitter embed JS) ────────────────────────────────
+// ── Token ────────────────────────────────────────────────────────────────────
 function getToken(id) {
   return ((BigInt(id) * BigInt(314159)) / BigInt(1e15)).toString();
 }
 
-// ─── Proxies tried in order ──────────────────────────────────────────────────
-function buildProxyUrls(target) {
+// ── CORS proxies ─────────────────────────────────────────────────────────────
+function proxyUrls(target) {
   const enc = encodeURIComponent(target);
   return [
-    `https://corsproxy.io/?${enc}`,
-    `https://api.allorigins.win/get?url=${enc}`,
-    `https://thingproxy.freeboard.io/fetch/${target}`,
+    { url: `https://corsproxy.io/?${enc}`, parse: t => JSON.parse(t) },
+    { url: `https://api.allorigins.win/get?url=${enc}`, parse: t => JSON.parse(JSON.parse(t).contents) },
+    { url: `https://api.codetabs.com/v1/proxy?quest=${enc}`, parse: t => JSON.parse(t) },
+    { url: `https://thingproxy.freeboard.io/fetch/${target}`, parse: t => JSON.parse(t) },
   ];
 }
 
-// Parse proxy response (allorigins wraps in {contents:...}, others return raw)
-function parseProxyResponse(text, proxyUrl) {
-  if (proxyUrl.includes('allorigins')) {
-    const wrapped = JSON.parse(text);
-    return JSON.parse(wrapped.contents);
-  }
-  return JSON.parse(text);
-}
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-function extractId(url) {
-  const m = url.match(/status\/(\d+)/);
-  return m ? m[1] : null;
-}
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function extractId(url) { const m = url.match(/status\/(\d+)/); return m ? m[1] : null; }
 function isValidUrl(url) {
   return /^https?:\/\/(www\.)?(twitter\.com|x\.com|mobile\.twitter\.com)\/.+\/status\/\d+/.test(url.trim());
 }
@@ -324,53 +386,37 @@ function qColor(h) {
   if (h >= 480)  return '#F59E0B';
   return '#6B7280';
 }
+function isIOS() { return /iPad|iPhone|iPod/.test(navigator.userAgent); }
 
-// ─── Recent history ──────────────────────────────────────────────────────────
-const HISTORY_KEY = 'xdl_history';
-function getHistory() {
-  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch { return []; }
-}
-function saveToHistory(url) {
-  let h = getHistory().filter(u => u !== url);
-  h.unshift(url);
-  h = h.slice(0, 5);
-  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(h)); } catch {}
+// ── History ──────────────────────────────────────────────────────────────────
+const HK = 'xdl_v2';
+function getHistory() { try { return JSON.parse(localStorage.getItem(HK)||'[]'); } catch { return []; } }
+function saveHistory(url) {
+  let h = getHistory().filter(u=>u!==url); h.unshift(url); h=h.slice(0,5);
+  try { localStorage.setItem(HK,JSON.stringify(h)); } catch {}
   renderHistory();
 }
-function removeFromHistory(url) {
-  const h = getHistory().filter(u => u !== url);
-  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(h)); } catch {}
+function removeHistory(url) {
+  try { localStorage.setItem(HK,JSON.stringify(getHistory().filter(u=>u!==url))); } catch {}
   renderHistory();
 }
 function renderHistory() {
   const h = getHistory();
-  const section = document.getElementById('recent-section');
+  const sec = document.getElementById('recent-section');
   const list = document.getElementById('recent-list');
-  if (!h.length) { section.style.display = 'none'; return; }
-  section.style.display = 'flex';
-  list.innerHTML = '';
+  if (!h.length) { sec.style.display='none'; return; }
+  sec.style.display='flex'; list.innerHTML='';
   h.forEach(url => {
-    const row = document.createElement('div');
-    row.className = 'recent-item';
-    const txt = document.createElement('span');
-    txt.className = 'recent-item-text';
-    txt.textContent = url;
-    txt.addEventListener('click', () => {
-      document.getElementById('url-input').value = url;
-      document.getElementById('clear-btn').style.display = 'block';
-      doFetch();
-    });
-    const del = document.createElement('button');
-    del.className = 'recent-item-del';
-    del.textContent = '✕';
-    del.addEventListener('click', e => { e.stopPropagation(); removeFromHistory(url); });
-    row.appendChild(txt);
-    row.appendChild(del);
-    list.appendChild(row);
+    const row = document.createElement('div'); row.className='recent-item';
+    const txt = document.createElement('span'); txt.className='recent-item-text'; txt.textContent=url;
+    txt.addEventListener('click',()=>{ urlInput.value=url; clearBtn.style.display='block'; doFetch(); });
+    const del = document.createElement('button'); del.className='recent-item-del'; del.textContent='✕';
+    del.addEventListener('click',e=>{ e.stopPropagation(); removeHistory(url); });
+    row.appendChild(txt); row.appendChild(del); list.appendChild(row);
   });
 }
 
-// ─── DOM refs ────────────────────────────────────────────────────────────────
+// ── DOM ───────────────────────────────────────────────────────────────────────
 const urlInput    = document.getElementById('url-input');
 const clearBtn    = document.getElementById('clear-btn');
 const pasteBtn    = document.getElementById('paste-btn');
@@ -380,7 +426,7 @@ const statusText  = document.getElementById('status-text');
 const errorBox    = document.getElementById('error-box');
 const errorMsg    = document.getElementById('error-msg');
 const debugInfo   = document.getElementById('debug-info');
-const saveTip     = document.getElementById('save-tip');
+const iosTip      = document.getElementById('ios-tip');
 const resultCard  = document.getElementById('result-card');
 const hintBox     = document.getElementById('hint-box');
 const qualityList = document.getElementById('quality-list');
@@ -389,235 +435,240 @@ const authorName  = document.getElementById('author-name');
 const authorHandle= document.getElementById('author-handle');
 const tweetText   = document.getElementById('tweet-text');
 const tweetThumb  = document.getElementById('tweet-thumb');
+const dlOverlay   = document.getElementById('dl-overlay');
+const dlBar       = document.getElementById('dl-bar');
+const dlPercent   = document.getElementById('dl-percent');
+const dlModalTitle= document.getElementById('dl-modal-title');
+const dlModalSub  = document.getElementById('dl-modal-sub');
 
 let downloading = false;
-let autoFetchTimer = null;
+let autoTimer = null;
 
-// ─── UI state ────────────────────────────────────────────────────────────────
+// ── UI ────────────────────────────────────────────────────────────────────────
 function setUI(s) {
-  statusBar.style.display  = s === 'loading' ? 'flex'  : 'none';
-  errorBox.style.display   = s === 'error'   ? 'flex'  : 'none';
-  resultCard.style.display = s === 'success' ? 'block' : 'none';
-  hintBox.style.display    = s === 'idle'    ? 'grid'  : 'none';
-  saveTip.style.display    = 'none';
-  fetchBtn.disabled        = s === 'loading';
-  fetchBtn.innerHTML       = s === 'loading' ? '<span class="spinner"></span>' : 'Fetch';
-  if (s === 'idle') renderHistory();
+  statusBar.style.display  = s==='loading' ? 'flex'  : 'none';
+  errorBox.style.display   = s==='error'   ? 'flex'  : 'none';
+  resultCard.style.display = s==='success' ? 'block' : 'none';
+  hintBox.style.display    = s==='idle'    ? 'grid'  : 'none';
+  iosTip.style.display     = 'none';
+  fetchBtn.disabled        = s==='loading';
+  fetchBtn.innerHTML       = s==='loading' ? '<span class="spinner"></span>' : 'Fetch';
+  if (s==='idle') renderHistory();
 }
 function setStatus(msg) { statusText.textContent = msg; }
 function showError(msg, debug) {
   errorMsg.textContent = msg;
-  if (debug) { debugInfo.textContent = debug; debugInfo.style.display = 'block'; }
-  else { debugInfo.style.display = 'none'; }
+  if (debug) { debugInfo.textContent=debug; debugInfo.style.display='block'; }
+  else debugInfo.style.display='none';
   setUI('error');
 }
 
-// ─── Events ──────────────────────────────────────────────────────────────────
+// ── Events ────────────────────────────────────────────────────────────────────
 urlInput.addEventListener('input', () => {
-  const v = urlInput.value;
-  clearBtn.style.display = v ? 'block' : 'none';
-  // Auto-fetch if a full valid URL is typed/pasted
-  clearTimeout(autoFetchTimer);
-  if (isValidUrl(v)) {
-    autoFetchTimer = setTimeout(doFetch, 600);
-  }
+  clearBtn.style.display = urlInput.value ? 'block' : 'none';
+  clearTimeout(autoTimer);
+  if (isValidUrl(urlInput.value.trim())) autoTimer = setTimeout(doFetch, 600);
 });
-
 clearBtn.addEventListener('click', () => {
-  urlInput.value = '';
-  clearBtn.style.display = 'none';
-  setUI('idle');
-  urlInput.focus();
+  urlInput.value=''; clearBtn.style.display='none'; setUI('idle'); urlInput.focus();
 });
-
-urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') { clearTimeout(autoFetchTimer); doFetch(); } });
-fetchBtn.addEventListener('click', () => { clearTimeout(autoFetchTimer); doFetch(); });
-
+urlInput.addEventListener('keydown', e => { if(e.key==='Enter'){ clearTimeout(autoTimer); doFetch(); }});
+fetchBtn.addEventListener('click', () => { clearTimeout(autoTimer); doFetch(); });
 pasteBtn.addEventListener('click', async () => {
   try {
-    const text = await navigator.clipboard.readText();
-    if (text) {
-      urlInput.value = text;
-      clearBtn.style.display = 'block';
-      if (isValidUrl(text)) {
-        clearTimeout(autoFetchTimer);
-        doFetch();
-      }
-    }
+    const t = await navigator.clipboard.readText();
+    if (t) { urlInput.value=t; clearBtn.style.display='block'; clearTimeout(autoTimer); if(isValidUrl(t)) doFetch(); }
   } catch { urlInput.focus(); }
 });
 
-// ─── Core fetch ──────────────────────────────────────────────────────────────
+// ── Fetch ─────────────────────────────────────────────────────────────────────
 async function doFetch() {
   const raw = urlInput.value.trim();
-  if (!raw) return;
-  if (!isValidUrl(raw)) {
-    showError('Paste a valid Twitter/X post URL — e.g. https://x.com/user/status/123…');
+  if (!raw || !isValidUrl(raw)) {
+    if (raw) showError('Paste a valid Twitter/X post URL — e.g. https://x.com/user/status/123…');
     return;
   }
   const id = extractId(raw);
-  if (!id) { showError("Couldn't extract tweet ID from that URL."); return; }
+  if (!id) { showError("Couldn't extract tweet ID."); return; }
 
-  qualityList.innerHTML = '';
+  qualityList.innerHTML='';
   setUI('loading');
 
   const token = getToken(id);
-  const targetUrl = `https://cdn.syndication.twimg.com/tweet-result?id=${id}&lang=en&token=${token}&features=tfw_timeline_list%3A%3Btfw_follower_count_sunset%3Atrue`;
+  const target = `https://cdn.syndication.twimg.com/tweet-result?id=${id}&lang=en&token=${token}`;
 
   let data = null;
-  let errors = [];
+  let errs = [];
 
-  // 1. Direct (works when there's no Referer restriction)
+  // Direct
   setStatus('Connecting to Twitter…');
   try {
-    const res = await fetch(targetUrl, {
-      signal: AbortSignal.timeout(7000),
-      headers: { 'User-Agent': 'Mozilla/5.0' }
-    });
-    if (res.ok) { data = await res.json(); }
-    else errors.push('direct:' + res.status);
-  } catch(e) { errors.push('direct:' + e.message); }
+    const r = await fetch(target, { signal: AbortSignal.timeout(7000) });
+    if (r.ok) data = await r.json();
+    else errs.push('direct:'+r.status);
+  } catch(e) { errs.push('direct:'+e.message); }
 
-  // 2-4. CORS proxies
+  // Proxies
   if (!data) {
-    const proxies = buildProxyUrls(targetUrl);
-    for (let i = 0; i < proxies.length; i++) {
-      setStatus(`Trying route ${i + 2} of ${proxies.length + 1}…`);
+    const proxies = proxyUrls(target);
+    for (let i=0; i<proxies.length; i++) {
+      setStatus(`Trying route ${i+2} of ${proxies.length+1}…`);
       try {
-        const res = await fetch(proxies[i], { signal: AbortSignal.timeout(9000) });
-        if (!res.ok) { errors.push(`proxy${i+1}:${res.status}`); continue; }
-        const text = await res.text();
-        data = parseProxyResponse(text, proxies[i]);
+        const r = await fetch(proxies[i].url, { signal: AbortSignal.timeout(9000) });
+        if (!r.ok) { errs.push(`p${i+1}:${r.status}`); continue; }
+        data = proxies[i].parse(await r.text());
         break;
-      } catch(e) { errors.push(`proxy${i+1}:${e.message}`); }
+      } catch(e) { errs.push(`p${i+1}:${e.message}`); }
     }
   }
 
   if (!data) {
-    showError(
-      'Could not reach Twitter. This can happen if your network blocks certain requests. Try on WiFi or mobile data.',
-      errors.join(' | ') + ' | token:' + token
-    );
+    showError('Could not reach Twitter. Try a different network or check your connection.', errs.join(' | '));
+    return;
+  }
+  if (data.__typename==='TweetTombstone'||data.tombstone) {
+    showError(data.tombstone?.text?.text||'This tweet is unavailable (deleted, age-restricted, or private).');
     return;
   }
 
-  if (data.__typename === 'TweetTombstone' || data.tombstone) {
-    const reason = data.tombstone?.text?.text || 'This tweet is unavailable (deleted, age-restricted, or private account).';
-    showError(reason);
-    return;
-  }
-
-  // ─── Extract video variants ─────────────────────────────────────────────
-  let variants = [];
-  let thumb = null;
-
-  // Path A: mediaDetails
-  for (const m of (data.mediaDetails || [])) {
-    if ((m.type === 'video' || m.type === 'animated_gif') && m.video_info?.variants) {
-      variants = m.video_info.variants.filter(v => v.content_type === 'video/mp4');
-      thumb = m.media_url_https || m.media_url;
-      break;
+  // Extract variants
+  let variants=[], thumb=null;
+  for (const m of (data.mediaDetails||[])) {
+    if ((m.type==='video'||m.type==='animated_gif') && m.video_info?.variants) {
+      variants = m.video_info.variants.filter(v=>v.content_type==='video/mp4');
+      thumb = m.media_url_https; break;
     }
   }
-  // Path B: extended_entities
   if (!variants.length) {
-    for (const m of (data.extended_entities?.media || [])) {
+    for (const m of (data.extended_entities?.media||[])) {
       if (m.video_info?.variants) {
-        variants = m.video_info.variants.filter(v => v.content_type === 'video/mp4');
-        thumb = m.media_url_https;
-        break;
+        variants = m.video_info.variants.filter(v=>v.content_type==='video/mp4');
+        thumb = m.media_url_https; break;
       }
     }
   }
-
   if (!variants.length) {
-    showError(
-      'No video found — this tweet may be image-only or text-only.',
-      'typename:' + (data.__typename||'?') + ' media:' + (data.mediaDetails||[]).length
-    );
+    showError('No video found — this tweet may be image-only or text-only.');
     return;
   }
 
   const videos = variants.map(v => {
     const m = v.url.match(/\/(\d+)x(\d+)\//);
-    return {
-      url: v.url.split('?')[0],
-      bitrate: v.bitrate || 0,
-      width: m ? parseInt(m[1]) : null,
-      height: m ? parseInt(m[2]) : null,
-    };
-  }).sort((a, b) => b.bitrate - a.bitrate);
+    return { url:v.url.split('?')[0], bitrate:v.bitrate||0,
+             width:m?parseInt(m[1]):null, height:m?parseInt(m[2]):null };
+  }).sort((a,b)=>b.bitrate-a.bitrate);
 
-  // ─── Render preview ─────────────────────────────────────────────────────
-  if (thumb) { tweetThumb.src = thumb; tweetThumb.style.display = 'block'; }
-  else { tweetThumb.style.display = 'none'; }
-  authorName.textContent   = data.user?.name || '';
-  const sn = data.user?.screen_name || '';
-  authorHandle.textContent = sn ? '@' + sn : '';
-  const txt = data.text || data.full_text || '';
-  tweetText.textContent    = txt.length > 160 ? txt.slice(0, 160) + '…' : txt;
-  qualityCount.textContent = videos.length + ' option' + (videos.length !== 1 ? 's' : '');
+  // Render preview
+  if (thumb) { tweetThumb.src=thumb; tweetThumb.style.display='block'; }
+  else tweetThumb.style.display='none';
+  authorName.textContent   = data.user?.name||'';
+  const sn = data.user?.screen_name||'';
+  authorHandle.textContent = sn ? '@'+sn : '';
+  const txt = data.text||data.full_text||'';
+  tweetText.textContent    = txt.length>160 ? txt.slice(0,160)+'…' : txt;
+  qualityCount.textContent = videos.length+' option'+(videos.length!==1?'s':'');
 
-  videos.forEach((v, idx) => {
-    const labelH = v.width && v.height ? Math.min(v.width, v.height) : null;
-    const row  = document.createElement('div');  row.className = 'quality-row';
-    const info = document.createElement('div');  info.className = 'quality-info';
-    const badge = document.createElement('span'); badge.className = 'quality-badge';
-    badge.textContent = qLabel(labelH); badge.style.background = qColor(labelH || 0);
-    const dims = document.createElement('span'); dims.className = 'quality-dims';
-    let d = '';
-    if (v.width && v.height) d += v.width + '×' + v.height;
-    if (v.bitrate) d += (d ? ' · ' : '') + Math.round(v.bitrate/1000) + ' kbps';
-    dims.textContent = d;
+  videos.forEach((v,idx) => {
+    const labelH = v.width&&v.height ? Math.min(v.width,v.height) : null;
+    const row=document.createElement('div'); row.className='quality-row';
+    const info=document.createElement('div'); info.className='quality-info';
+    const badge=document.createElement('span'); badge.className='quality-badge';
+    badge.textContent=qLabel(labelH); badge.style.background=qColor(labelH||0);
+    const dims=document.createElement('span'); dims.className='quality-dims';
+    let d='';
+    if(v.width&&v.height) d+=v.width+'×'+v.height;
+    if(v.bitrate) d+=(d?' · ':'')+Math.round(v.bitrate/1000)+' kbps';
+    dims.textContent=d;
     info.appendChild(badge); info.appendChild(dims);
-    const btn = document.createElement('button'); btn.className = 'dl-btn';
-    btn.innerHTML = '⬇ Download'; btn.dataset.idx = idx;
-    btn.addEventListener('click', () => handleDownload(v.url, idx, labelH));
+    const btn=document.createElement('button'); btn.className='dl-btn';
+    btn.innerHTML='⬇ Download'; btn.dataset.idx=idx;
+    btn.addEventListener('click',()=>handleDownload(v.url,idx,labelH));
     row.appendChild(info); row.appendChild(btn);
     qualityList.appendChild(row);
   });
 
-  saveToHistory(raw);
+  saveHistory(raw);
   setUI('success');
 }
 
-// ─── Download ────────────────────────────────────────────────────────────────
+// ── Download with progress ────────────────────────────────────────────────────
 async function handleDownload(videoUrl, idx, height) {
   if (downloading) return;
   downloading = true;
-  saveTip.style.display = 'none';
 
-  document.querySelectorAll('.dl-btn').forEach(b => {
-    b.disabled = true;
-    if (parseInt(b.dataset.idx) === idx) b.innerHTML = '<span class="spinner"></span> Saving…';
-  });
+  document.querySelectorAll('.dl-btn').forEach(b=>{ b.disabled=true; });
+
+  // Show overlay
+  dlBar.style.width='0%'; dlPercent.textContent='0%';
+  dlModalTitle.textContent='Downloading…';
+  dlModalSub.textContent='Fetching video from Twitter…';
+  dlOverlay.classList.add('show');
 
   try {
-    const res = await fetch(videoUrl, { signal: AbortSignal.timeout(60000) });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const blob = await res.blob();
+    const res = await fetch(videoUrl, { signal: AbortSignal.timeout(90000) });
+    if (!res.ok) throw new Error('HTTP '+res.status);
+
+    const total = parseInt(res.headers.get('Content-Length')||'0');
+    const reader = res.body.getReader();
+    const chunks = [];
+    let loaded = 0;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+      loaded += value.length;
+      if (total) {
+        const pct = Math.round((loaded/total)*100);
+        dlBar.style.width = pct+'%';
+        dlPercent.textContent = pct+'%';
+        dlModalSub.textContent = `${(loaded/1024/1024).toFixed(1)} MB of ${(total/1024/1024).toFixed(1)} MB`;
+      } else {
+        // Unknown size — animate
+        dlModalSub.textContent = `${(loaded/1024/1024).toFixed(1)} MB downloaded…`;
+        dlBar.style.width = '60%';
+        dlPercent.textContent = '…';
+      }
+    }
+
+    dlBar.style.width='100%'; dlPercent.textContent='100%';
+    dlModalTitle.textContent='Saving…';
+    dlModalSub.textContent='Preparing your file…';
+
+    // Combine chunks
+    const all = new Uint8Array(loaded);
+    let pos=0;
+    for (const chunk of chunks) { all.set(chunk,pos); pos+=chunk.length; }
+    const blob = new Blob([all], { type:'video/mp4' });
     const blobUrl = URL.createObjectURL(blob);
+
+    // Trigger download — goes to Safari Downloads folder on iOS 13+
     const a = document.createElement('a');
     a.href = blobUrl;
-    a.download = 'x-video-' + qLabel(height) + '.mp4';
+    a.download = 'x-video-'+qLabel(height)+'.mp4';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
-  } catch {
-    // Open direct MP4 and show iPhone tip
-    window.open(videoUrl, '_blank');
-    saveTip.style.display = 'flex';
+    setTimeout(()=>URL.revokeObjectURL(blobUrl), 15000);
+
+    dlOverlay.classList.remove('show');
+    iosTip.style.display = 'flex';
+
+  } catch(err) {
+    dlOverlay.classList.remove('show');
+    // Fallback: open direct in new tab
+    window.open(videoUrl+'?dl=1','_blank');
+    iosTip.style.display = 'flex';
+    iosTip.querySelector('.ios-tip-title').textContent = 'Video opened in new tab';
   } finally {
     downloading = false;
-    document.querySelectorAll('.dl-btn').forEach(b => {
-      b.disabled = false;
-      b.innerHTML = '⬇ Download';
+    document.querySelectorAll('.dl-btn').forEach(b=>{
+      b.disabled=false; b.innerHTML='⬇ Download';
     });
   }
 }
 
-// ─── Init ────────────────────────────────────────────────────────────────────
+// ── Init ──────────────────────────────────────────────────────────────────────
 setUI('idle');
 </script>
 </body>
